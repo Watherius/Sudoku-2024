@@ -50,4 +50,8 @@ export interface SudokuActionsProps {
 export interface User {
 	id: string
 	username: string
+	level: number
+	experience: number
+	maxExperience: number
+	gameInProgress: boolean
 }

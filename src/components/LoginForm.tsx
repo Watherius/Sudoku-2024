@@ -4,13 +4,24 @@ import { useAuthStore } from '../store/authStore'
 export const LoginForm: React.FC = () => {
 	const [username, setUsername] = useState('')
 	const login = useAuthStore(state => state.login)
+	const loadUserData = useAuthStore(state => state.loadUserData)
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault()
-		login({
-			id: crypto.randomUUID(),
-			username,
-		})
+	const handleSubmit = () => {
+		const existingUserData = loadUserData(username)
+		if (existingUserData) {
+			login(existingUserData)
+		} else {
+			const newUser = {
+				id: crypto.randomUUID(),
+				username,
+				level: 1,
+				experience: 0,
+				maxExperience: 500,
+				gameInProgress: false,
+			}
+			localStorage.setItem(`user_${username}`, JSON.stringify(newUser))
+			login(newUser)
+		}
 	}
 
 	return (
