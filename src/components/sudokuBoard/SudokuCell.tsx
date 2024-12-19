@@ -1,5 +1,5 @@
-import { CellState } from '../types/sudoku'
-import SudokuCellNote from './SudokuCellNode'
+import { CellState } from '../../types/sudoku'
+import SudokuCellNote from '../SudokuCellNode'
 
 interface SudokuCellProps extends CellState {
 	value: number | string
