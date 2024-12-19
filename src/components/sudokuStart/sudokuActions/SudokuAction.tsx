@@ -1,10 +1,10 @@
 import { Lightbulb, PenLine, Undo2 } from 'lucide-react'
-import { SudokuActionsProps } from '../../types/sudoku'
+import { SudokuActionsProps } from '../../../types/sudoku'
 import {
 	addRandomValue,
 	removeConflictElement,
 	toggleNoteMode,
-} from '../../utils/sudokuActions'
+} from '../../../utils/sudokuActions'
 import ActionButton from './ActionButton'
 
 export default function SudokuActions({

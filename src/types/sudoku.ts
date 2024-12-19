@@ -46,3 +46,8 @@ export interface SudokuActionsProps {
 	statusNote?: boolean
 	setStatusNote?: Dispatch<SetStateAction<boolean>>
 }
+
+export interface User {
+	id: string
+	username: string
+}

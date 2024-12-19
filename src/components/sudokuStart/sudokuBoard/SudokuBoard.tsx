@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction } from 'react'
-import { CellPosition, GameState } from '../../types/sudoku'
-import { cloneBoard, getCellKey } from '../../utils/boardUtils'
-import { getCellState } from '../../utils/cellStateUtils'
-import SudokuCell from './SudokuCell'
+import { CellPosition, GameState } from '../../../types/sudoku'
+import { cloneBoard, getCellKey } from '../../../utils/boardUtils'
+import { getCellState } from '../../../utils/cellStateUtils'
+import SudokuCell from '../sudokuBoard/SudokuCell'
 
 interface SudokuBoardProps {
 	gameState: GameState

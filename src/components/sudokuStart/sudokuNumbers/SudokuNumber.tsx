@@ -1,4 +1,4 @@
-import { GameState } from '../../types/sudoku'
+import { GameState } from '../../../types/sudoku'
 import NumberButton from './NumberButton'
 
 interface SelectNumberProps {

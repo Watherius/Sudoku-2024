@@ -1,4 +1,4 @@
-import { SudokuActionButtonProps } from '../../types/sudoku'
+import { SudokuActionButtonProps } from '../../../types/sudoku'
 
 export default function ActionButton({
 	buttonStyle,
