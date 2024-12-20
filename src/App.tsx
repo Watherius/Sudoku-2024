@@ -1,12 +1,12 @@
-import { LoginForm } from './components/LoginForm'
-import { SudokuMain } from './components/SudokuMain'
+import { LoginForm } from './pages/LoginForm'
+import { MainMenu } from './pages/MainMenu'
 import { useAuthStore } from './store/authStore'
 
 export default function App() {
 	const user = useAuthStore(state => state.user)
 	return (
 		<div className='min-h-screen bg-gray-100'>
-			{user ? <SudokuMain /> : <LoginForm />}
+			{user ? <MainMenu /> : <LoginForm />}
 		</div>
 	)
 }

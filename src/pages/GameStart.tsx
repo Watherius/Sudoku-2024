@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useSudokuSelection } from '../../hooks/useSudokuSelection'
-import { GameState } from '../../types/sudoku'
-import { generateSudoku } from '../../utils/sudokuGenerator'
-import SudokuAction from './sudokuActions/SudokuAction'
-import SudokuBoard from './sudokuBoard/SudokuBoard'
-import SudokuInfo from './SudokuInfo'
-import SudokuNumber from './sudokuNumbers/SudokuNumber'
+import SudokuAction from '../components/sudokuStart/sudokuActions/SudokuAction'
+import SudokuBoard from '../components/sudokuStart/sudokuBoard/SudokuBoard'
+import SudokuInfo from '../components/sudokuStart/SudokuInfo'
+import SudokuNumber from '../components/sudokuStart/sudokuNumbers/SudokuNumber'
+import { useSudokuSelection } from '../hooks/useSudokuSelection'
+import { GameState } from '../types/sudoku'
+import { generateSudoku } from '../utils/sudokuGenerator'
 
 export default function GameStart() {
 	const [gameState, setGameState] = useState<GameState>({
@@ -17,14 +17,13 @@ export default function GameStart() {
 		useSudokuSelection(gameState.playingBoard, conflicts)
 	const [newValues, setNewValues] = useState<Set<string>>(new Set())
 	const [statusNote, setStatusNote] = useState<boolean>(false)
-	const [difficulty, setDifficulty] = useState<number | undefined>(35)
 
 	useEffect(() => {
 		startGame()
 	}, [])
 
 	const startGame = () => {
-		const newGame = generateSudoku(difficulty)
+		const newGame = generateSudoku(35)
 		setGameState(newGame)
 		setConflicts(new Set())
 		setSelectedCell(null)
@@ -38,7 +37,7 @@ export default function GameStart() {
 	return (
 		<div className='min-h-screen bg-gray-100 flex items-center justify-center p-4'>
 			<div className='bg-white rounded-xl shadow-xl p-6'>
-				<SudokuInfo difficulty={difficulty} />
+				<SudokuInfo difficulty={35} />
 				<SudokuBoard
 					gameState={gameState}
 					setGameState={setGameState}

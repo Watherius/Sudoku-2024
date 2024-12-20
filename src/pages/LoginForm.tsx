@@ -29,12 +29,12 @@ export const LoginForm: React.FC = () => {
 			<div className='max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow'>
 				<div>
 					<h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900'>
-						Добро пожаловать в Sudoku!
+						Вход в Sudoku
 					</h2>
 				</div>
 				<form className='mt-8 space-y-6' onSubmit={handleSubmit}>
-					<div className='rounded-md shadow-sm space-y-4'>
-						<div>
+					<div className=''>
+						<div className='rounded-md shadow-sm space-y-4'>
 							<label htmlFor='username' className='sr-only'>
 								Имя пользователя
 							</label>
@@ -49,6 +49,9 @@ export const LoginForm: React.FC = () => {
 								placeholder='Имя пользователя'
 							/>
 						</div>
+						<p className='text-gray-500 opacity-80 italic text-[0.8rem] mt-4'>
+							* Введенное имя будет использоваться как профиль, не забудьте его.
+						</p>
 					</div>
 
 					<div>
