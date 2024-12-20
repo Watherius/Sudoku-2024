@@ -26,6 +26,12 @@ export interface GameState {
 	solutionBoard: Board
 }
 
+export interface Difficulty {
+	label: string
+	points: number
+	difficulty: number
+}
+
 export interface SudokuActionButtonProps {
 	buttonStyle: string
 	buttonIcon: JSX.Element

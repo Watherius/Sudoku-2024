@@ -1,9 +1,9 @@
 import { useAuthStore } from '../../store/authStore'
 
-export default function LevelDisplay({ onClick }: any) {
+export default function HomeScreen({ onClick }: any) {
 	const user = useAuthStore(state => state.user)
 	return (
-		<div className='flex flex-col items-center'>
+		<div className='block relative h-[100%]'>
 			<div className='flex flex-col text-center gap-2'>
 				<h2 className='text-6xl font-bold'>{user?.level}</h2>
 				<p className='text-3xl'>Уровень</p>
@@ -11,7 +11,7 @@ export default function LevelDisplay({ onClick }: any) {
 					{user?.experience}/{user?.maxExperience} очков
 				</p>
 			</div>
-			<div className='flex flex-col mt-[100px] gap-2'>
+			<div className='flex flex-col gap-2 absolute bottom-0 w-[100%]'>
 				{user?.gameInProgress ? (
 					<button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>
 						Продолжить игру

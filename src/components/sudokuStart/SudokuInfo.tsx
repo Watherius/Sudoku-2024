@@ -1,21 +1,24 @@
-interface SudokuInfoProps {
-	difficulty: number | undefined
-}
+import { Heart } from 'lucide-react'
 
-export default function SudokuInfo({ difficulty }: SudokuInfoProps) {
+export default function SudokuInfo({ difficulty }: any) {
+	const life = difficulty?.label === 'Легкая' ? 3 : 5
+	const currentLife = Array.from({ length: life }, (_, index) => (
+		<Heart color='red' key={index} />
+	))
 	return (
-		<div className='grid grid-cols-3 justify-between leading-none mb-4 text-gray-400'>
+		<div className='grid grid-cols-3 justify-between items-center leading-none mb-4 text-gray-400'>
 			<div className='flex flex-col items-start'>
-				<span className={`text-[0.8rem]`}>Сложность</span>
-				<span className={`text-[1rem] font-medium`}>
-					{difficulty === 35 ? 'Средняя' : ''}
+				<span className='text-[0.8rem]'>Сложность</span>
+				<span className='text-[1rem] text-gray-600 font-medium'>
+					{difficulty?.label}
 				</span>
 			</div>
-			<div className='flex flex-col items-center'>
-				<span className={`text-[1rem] font-medium`}>00:00</span>
+			<div className='flex flex-col items-center text-[1rem] text-gray-600 font-medium'>
+				00:00
 			</div>
 			<div className='flex flex-col items-end'>
-				<span className={`text-[0.8rem]`}>Жизни</span>
+				<span className='text-[0.8rem]'>Жизни</span>
+				<div className='flex'>{currentLife}</div>
 			</div>
 		</div>
 	)

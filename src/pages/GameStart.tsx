@@ -7,7 +7,7 @@ import { useSudokuSelection } from '../hooks/useSudokuSelection'
 import { GameState } from '../types/sudoku'
 import { generateSudoku } from '../utils/sudokuGenerator'
 
-export default function GameStart() {
+export default function GameStart({ difficulty }: any) {
 	const [gameState, setGameState] = useState<GameState>({
 		playingBoard: [],
 		solutionBoard: [],
@@ -23,7 +23,7 @@ export default function GameStart() {
 	}, [])
 
 	const startGame = () => {
-		const newGame = generateSudoku(35)
+		const newGame = generateSudoku(difficulty?.difficulty)
 		setGameState(newGame)
 		setConflicts(new Set())
 		setSelectedCell(null)
@@ -37,7 +37,7 @@ export default function GameStart() {
 	return (
 		<div className='min-h-screen bg-gray-100 flex items-center justify-center p-4'>
 			<div className='bg-white rounded-xl shadow-xl p-6'>
-				<SudokuInfo difficulty={35} />
+				<SudokuInfo difficulty={difficulty} />
 				<SudokuBoard
 					gameState={gameState}
 					setGameState={setGameState}
