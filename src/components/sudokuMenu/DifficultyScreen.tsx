@@ -1,7 +1,9 @@
 import { CornerDownLeft } from 'lucide-react'
 
 import { Dispatch, SetStateAction } from 'react'
+import { useAuthStore } from '../../store/authStore'
 import { Difficulty } from '../../types/sudoku'
+import { loadUserDataFromStorage } from '../../utils/localStorage'
 
 interface DifficultyScreenProps {
 	onClick: () => void
@@ -22,11 +24,24 @@ export default function DifficultyScreen({
 	setLevel,
 	setScreen,
 }: DifficultyScreenProps) {
+	const user = useAuthStore(state => state.user)
+
 	const handledifficultyClick = (
 		label: string,
 		points: number,
 		difficulty: number
 	) => {
+		const username = user?.username ? `${user.username}` : null
+
+		if (username) {
+			const userData = loadUserDataFromStorage(username)
+			if (userData) {
+				delete userData.currentGameData
+				userData.currentGameState = false
+				localStorage.setItem(`user_${user?.username}`, JSON.stringify(userData))
+				useAuthStore.getState().login(userData)
+			}
+		}
 		setLevel({ label: label, points: points, difficulty: difficulty })
 		setScreen('game')
 	}

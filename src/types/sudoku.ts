@@ -59,5 +59,6 @@ export interface User {
 	level: number
 	experience: number
 	maxExperience: number
-	gameInProgress: boolean
+	currentGameState: boolean
+	currentGameData?: any
 }

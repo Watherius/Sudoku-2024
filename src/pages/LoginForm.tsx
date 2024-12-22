@@ -1,14 +1,21 @@
 import { useState } from 'react'
 import { useAuthStore } from '../store/authStore'
+import {
+	loadUserDataFromStorage,
+	saveUserDataToStorage,
+} from '../utils/localStorage'
 
 export const LoginForm: React.FC = () => {
 	const [username, setUsername] = useState('')
 	const login = useAuthStore(state => state.login)
-	const loadUserData = useAuthStore(state => state.loadUserData)
 
-	const handleSubmit = () => {
-		const existingUserData = loadUserData(username)
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault()
+
+		const existingUserData = loadUserDataFromStorage(username)
+
 		if (existingUserData) {
+			saveUserDataToStorage(username, existingUserData) // Обновляем время входа
 			login(existingUserData)
 		} else {
 			const newUser = {
@@ -17,9 +24,9 @@ export const LoginForm: React.FC = () => {
 				level: 1,
 				experience: 0,
 				maxExperience: 500,
-				gameInProgress: false,
+				currentGameState: false,
 			}
-			localStorage.setItem(`user_${username}`, JSON.stringify(newUser))
+			saveUserDataToStorage(username, newUser)
 			login(newUser)
 		}
 	}
