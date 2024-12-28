@@ -56,9 +56,16 @@ export interface SudokuActionsProps {
 export interface User {
 	id: string
 	username: string
+	password: string
 	level: number
 	experience: number
 	maxExperience: number
 	currentGameState: boolean
 	currentGameData?: any
+	//gameTimer: number
+}
+
+export interface AuthFormData {
+	username: string
+	password: string
 }

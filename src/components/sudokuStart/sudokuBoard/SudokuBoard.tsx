@@ -1,8 +1,9 @@
-import { Dispatch, SetStateAction } from 'react'
-import { CellPosition, GameState } from '../../../types/sudoku'
+import { Dispatch, SetStateAction, useEffect } from 'react'
+import { useAuthStore } from '../../../store/authStore'
+import { CellPosition, Difficulty, GameState } from '../../../types/sudoku'
 import { cloneBoard, getCellKey } from '../../../utils/boardUtils'
 import { getCellState } from '../../../utils/cellStateUtils'
-import SudokuCell from '../sudokuBoard/SudokuCell'
+import SudokuCell from './SudokuCell'
 
 interface SudokuBoardProps {
 	gameState: GameState
@@ -15,6 +16,8 @@ interface SudokuBoardProps {
 	newValues: Set<string>
 	setNewValues: Dispatch<SetStateAction<Set<string>>>
 	statusNote: boolean
+	level: Difficulty
+	//timer: number
 }
 
 export default function SudokuBoard({
@@ -28,7 +31,12 @@ export default function SudokuBoard({
 	newValues,
 	setNewValues,
 	statusNote,
-}: SudokuBoardProps) {
+	level,
+}: //timer,
+SudokuBoardProps) {
+	const stateGame = useAuthStore(state => state.stateGame)
+	const user = useAuthStore(state => state.user)
+
 	const handleCellClick = (rowIndex: number, colIndex: number) => {
 		const position: CellPosition = [rowIndex, colIndex]
 		const cellKey = getCellKey(rowIndex, colIndex)
@@ -45,8 +53,7 @@ export default function SudokuBoard({
 			const newBoard = cloneBoard(gameState.playingBoard)
 			newBoard[rowIndex][colIndex] = selectedNumber
 
-			const isCorrectValue =
-				gameState.solutionBoard[rowIndex][colIndex] === selectedNumber
+			const isCorrectValue = gameState.solutionBoard[rowIndex][colIndex] === selectedNumber
 
 			setConflicts(prev => {
 				const next = new Set(prev)
@@ -66,12 +73,22 @@ export default function SudokuBoard({
 				})
 			}
 
-			setGameState(prev => ({
-				...prev,
+			const updatedGameState = {
+				...gameState,
 				playingBoard: newBoard,
-			}))
+			}
+
+			setGameState(updatedGameState)
+
+			if (user) {
+				stateGame(true, updatedGameState, level /*, timer*/)
+			}
 		}
 	}
+
+	useEffect(() => {
+		console.log('useEffectconflicts: ', conflicts)
+	}, [conflicts])
 
 	return (
 		<div className='grid grid-cols-9 border-2 border-black'>
@@ -80,28 +97,14 @@ export default function SudokuBoard({
 					const position: CellPosition = [rowIndex, colIndex]
 					const cellKey = getCellKey(rowIndex, colIndex)
 
-					const cellState = getCellState(
-						gameState.playingBoard,
-						position,
-						selectedCell,
-						selectedNumber,
-						conflicts
-					)
+					const cellState = getCellState(gameState.playingBoard, position, selectedCell, selectedNumber, conflicts)
 
 					return (
 						<div
 							key={cellKey}
 							className={`
-                ${
-									colIndex % 3 === 2 && colIndex !== 8
-										? 'border-r-2 border-black'
-										: ''
-								}
-                ${
-									rowIndex % 3 === 2 && rowIndex !== 8
-										? 'border-b-2 border-black'
-										: ''
-								}
+                ${colIndex % 3 === 2 && colIndex !== 8 ? 'border-r-2 border-black' : ''}
+                ${rowIndex % 3 === 2 && rowIndex !== 8 ? 'border-b-2 border-black' : ''}
               `}
 						>
 							<SudokuCell

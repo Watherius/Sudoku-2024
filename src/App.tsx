@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { LoginForm } from './pages/LoginForm'
 import MainMenu from './pages/MainMenu'
 
+import { Box } from '@mui/material'
+import Registration from './pages/Registration'
 import { useAuthStore } from './store/authStore'
 import { loadUserDataFromStorage } from './utils/localStorage'
 
@@ -31,6 +32,9 @@ export default function App() {
 	}, [checkLoginValidity, cleanupOldUsers, login])
 
 	return (
-		<div className='min-h-scree'>{user ? <MainMenu /> : <LoginForm />}</div>
+		<Box className='min-h-screen flex items-center justify-center bg-gray-100'>
+			{/*<Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>*/}
+			{user ? <MainMenu /> : <Registration />}
+		</Box>
 	)
 }

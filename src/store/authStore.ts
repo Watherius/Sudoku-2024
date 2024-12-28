@@ -1,12 +1,20 @@
+import { SetStateAction } from 'react'
 import { create } from 'zustand'
 import { User } from '../types/sudoku'
 import { cleanupOldUsers, isLoginExpired } from '../utils/dateUtils'
+import { Difficulty, GameState } from './../types/sudoku'
 
 interface AuthState {
 	user: User | null
 	login: (user: User) => void
 	logout: () => void
-	stateGame: (isState: boolean, ...date: any) => void
+	stateGame: (
+		isState: boolean,
+		boardGame: SetStateAction<GameState>,
+		difficulty: SetStateAction<Difficulty>
+		//timer: number
+	) => void
+	updateTimer: (newTimer: number) => void
 	checkLoginValidity: (username: string) => boolean
 	cleanupOldUsers: () => void
 }
@@ -25,7 +33,7 @@ export const useAuthStore = create<AuthState>(set => ({
 		}
 		set({ user: null })
 	},
-	stateGame: (isState, boardGame, difficulty) => {
+	stateGame: (isState, boardGame, difficulty /*timer*/) => {
 		set(state => {
 			if (state.user) {
 				const updatedUser = {
@@ -34,12 +42,26 @@ export const useAuthStore = create<AuthState>(set => ({
 					currentGameData: {
 						boardGame: boardGame,
 						boardDifficulty: difficulty,
+						//boardTimer: timer,
 					},
 				}
-				localStorage.setItem(
-					`user_${updatedUser.username}`,
-					JSON.stringify(updatedUser)
-				)
+				localStorage.setItem(`user_${updatedUser.username}`, JSON.stringify(updatedUser))
+				return { user: updatedUser }
+			}
+			return state
+		})
+	},
+	updateTimer: (newTimer: number) => {
+		set(state => {
+			if (state.user && state.user.currentGameData) {
+				const updatedUser = {
+					...state.user,
+					currentGameData: {
+						...state.user.currentGameData,
+						boardTimer: newTimer,
+					},
+				}
+				localStorage.setItem(`user_${updatedUser.username}`, JSON.stringify(updatedUser))
 				return { user: updatedUser }
 			}
 			return state
