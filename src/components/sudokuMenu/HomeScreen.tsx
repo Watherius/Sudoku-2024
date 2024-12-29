@@ -1,4 +1,7 @@
 import { LogOut } from 'lucide-react'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { logout } from '../../store/authSlice'
 import { useAuthStore } from '../../store/authStore'
 
 interface HomeScreenProps {
@@ -6,15 +9,16 @@ interface HomeScreenProps {
 	onClickContinueGame: () => void
 }
 
-export default function HomeScreen({
-	onClickNewGame,
-	onClickContinueGame,
-}: HomeScreenProps) {
-	const user = useAuthStore(state => state.user)
-	const logout = useAuthStore(state => state.logout)
+export default function HomeScreen({ onClickNewGame, onClickContinueGame }: HomeScreenProps) {
+	const navigate = useNavigate()
+	const dispatch = useDispatch()
+
 	const handleLogout = () => {
-		logout()
+		dispatch(logout())
+		navigate('/login')
 	}
+
+	const user = useAuthStore(state => state.user)
 
 	return (
 		<div className='block relative h-[100%]'>

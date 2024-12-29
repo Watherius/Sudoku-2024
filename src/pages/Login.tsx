@@ -2,25 +2,23 @@ import { Button, TextField, Typography } from '@mui/material'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import { register } from '../store/authSlice'
-import { AppDispatch, RootState } from '../store/store'
+import { login } from '../store/authSlice'
+import { RootState } from '../store/store'
 import { LoginCredentials } from '../types/auth'
 import { authSchema } from '../utils/authValidation'
 
-export default function Registration() {
-	const dispatch = useDispatch<AppDispatch>()
+export default function Login() {
+	const dispatch = useDispatch()
 	const navigate = useNavigate()
 	const error = useSelector((state: RootState) => state.auth.error)
 
-	const handleSubmit = async (values: LoginCredentials, { setSubmitting }: FormikHelpers<LoginCredentials>) => {
-		const success = await dispatch(register(values) as any)
-		setSubmitting(false)
-
-		if (success && !error) {
-			setTimeout(() => {
+	const handleSubmit = (values: LoginCredentials, { setSubmitting }: FormikHelpers<LoginCredentials>) => {
+		dispatch(login(values) as any).then(() => {
+			setSubmitting(false)
+			if (!error) {
 				navigate('/')
-			}, 1500)
-		}
+			}
+		})
 	}
 
 	return (
@@ -33,7 +31,7 @@ export default function Registration() {
 						component='h1'
 						gutterBottom
 					>
-						Регистрация
+						Вход
 					</Typography>
 
 					<TextField
@@ -58,7 +56,6 @@ export default function Registration() {
 						error={touched.password && Boolean(errors.password)}
 						helperText={touched.password && errors.password}
 					/>
-
 					{error && (
 						<Typography color='error' variant='body2' className='text-center'>
 							{error}
@@ -72,13 +69,12 @@ export default function Registration() {
 						disabled={isSubmitting}
 						className='bg-indigo-600 hover:bg-indigo-700'
 					>
-						Регистрация
+						Войти
 					</Button>
-
 					<Typography variant='body2' className='text-center'>
-						Уже есть аккаунт?{' '}
-						<Link to='/login' className='text-indigo-600 hover:text-indigo-800'>
-							Войти
+						Нету профиля?{' '}
+						<Link to='/register' className='text-indigo-600 hover:text-indigo-800'>
+							Зарегистрироваться
 						</Link>
 					</Typography>
 				</Form>

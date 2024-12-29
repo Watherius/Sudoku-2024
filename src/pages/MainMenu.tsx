@@ -1,17 +1,29 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import DifficultyScreen from '../components/sudokuMenu/DifficultyScreen'
 import HomeScreen from '../components/sudokuMenu/HomeScreen'
+import { RootState } from '../store/store'
 import { Difficulty } from '../types/sudoku'
 import GameStart from './GameStart'
 
 export default function MainMenu() {
+	const navigate = useNavigate()
+	const { user, isAuthenticated } = useSelector((state: RootState) => state.auth)
+
 	const [screen, setScreen] = useState<'home' | 'difficulty' | 'game'>('home')
 	const [level, setLevel] = useState<Difficulty>({
 		label: '',
 		points: 0,
 		difficulty: 36,
 	})
+
+	useEffect(() => {
+		if (!isAuthenticated) {
+			navigate('/login')
+		}
+	}, [isAuthenticated, navigate])
 
 	const handleNewGameClick = () => {
 		setScreen('difficulty')
@@ -44,11 +56,7 @@ export default function MainMenu() {
 							/>
 						)}
 						{screen === 'difficulty' && (
-							<DifficultyScreen
-								onClick={() => handleBackClick()}
-								setLevel={setLevel}
-								setScreen={setScreen}
-							/>
+							<DifficultyScreen onClick={() => handleBackClick()} setLevel={setLevel} setScreen={setScreen} />
 						)}
 					</div>
 				</div>
