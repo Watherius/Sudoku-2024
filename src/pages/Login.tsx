@@ -57,7 +57,7 @@ export default function Login() {
 						helperText={touched.password && errors.password}
 					/>
 					{error && (
-						<Typography color='error' variant='body2' className='text-center'>
+						<Typography color='error' variant='body2' className='text-center !mt-4'>
 							{error}
 						</Typography>
 					)}
@@ -72,7 +72,7 @@ export default function Login() {
 						Войти
 					</Button>
 					<Typography variant='body2' className='text-center'>
-						Нету профиля?{' '}
+						Нет аккаунта?{' '}
 						<Link to='/register' className='text-indigo-600 hover:text-indigo-800'>
 							Зарегистрироваться
 						</Link>

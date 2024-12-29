@@ -6,11 +6,37 @@ import { AppDispatch } from './store'
 const MONTH_IN_MS = 30 * 24 * 60 * 60 * 1000
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 
-const initialState: AuthState = {
-	user: null,
-	isAuthenticated: false,
-	error: null,
+const loadInitialState = (): AuthState => {
+	const savedUser = localStorage.getItem('currentUser')
+	if (savedUser) {
+		const user = JSON.parse(savedUser)
+		const now = Date.now()
+
+		// Проверка прошло ли 24 часа
+		if (now - user.lastLogin > DAY_IN_MS) {
+			localStorage.removeItem('currentUser')
+			return { user: null, isAuthenticated: false, error: null }
+		}
+
+		// Проверка прошло ли 30 дней
+		if (now - user.lastLogin > MONTH_IN_MS) {
+			const users = JSON.parse(localStorage.getItem('users') || '[]')
+			const updatedUsers = users.filter((u: User) => u.username !== user.username)
+			localStorage.setItem('users', JSON.stringify(updatedUsers))
+			localStorage.removeItem('currentUser')
+			return { user: null, isAuthenticated: false, error: null }
+		}
+
+		return {
+			user,
+			isAuthenticated: true,
+			error: null,
+		}
+	}
+	return { user: null, isAuthenticated: false, error: null }
 }
+
+const initialState: AuthState = loadInitialState()
 
 const authSlice = createSlice({
 	name: 'auth',
@@ -20,16 +46,19 @@ const authSlice = createSlice({
 			state.user = action.payload
 			state.isAuthenticated = true
 			state.error = null
+			localStorage.setItem('currentUser', JSON.stringify(action.payload))
 		},
 		loginFailure: (state, action: PayloadAction<string>) => {
 			state.user = null
 			state.isAuthenticated = false
 			state.error = action.payload
+			localStorage.removeItem('currentUser')
 		},
 		logout: state => {
 			state.user = null
 			state.isAuthenticated = false
 			state.error = null
+			localStorage.removeItem('currentUser')
 		},
 		clearError: state => {
 			state.error = null
@@ -44,9 +73,14 @@ export const login = (credentials: LoginCredentials) => async (dispatch: AppDisp
 		const users = JSON.parse(localStorage.getItem('users') || '[]')
 		const user = users.find((u: User) => u.username === credentials.username)
 
-		if (!user || !isValidPassword(credentials.password, user.password)) {
-			dispatch(loginFailure('Неверный логин или пароль'))
-			return
+		if (!user) {
+			dispatch(loginFailure('Неправильный логин или пароль'))
+			return false
+		}
+
+		if (!isValidPassword(credentials.password, user.password)) {
+			dispatch(loginFailure('Неправильный логин или пароль'))
+			return false
 		}
 
 		const now = Date.now()
@@ -82,6 +116,7 @@ export const register = (credentials: LoginCredentials) => async (dispatch: AppD
 		}
 
 		const newUser: User = {
+			id: crypto.randomUUID(),
 			username: credentials.username,
 			password: encrypt(credentials.password),
 			createdAt: Date.now(),

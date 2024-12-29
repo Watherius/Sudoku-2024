@@ -1,14 +1,16 @@
 export interface User {
+	id: string
 	username: string
 	password: string
-	/*level: number
-	experience: number
-	maxExperience: number
-	currentGameState: boolean
-	currentGameData?: any*/
-	//gameTimer: number
 	createdAt: number
 	lastLogin: number
+}
+
+export interface UserData extends User {
+	username: string
+	level: number
+	experience: number
+	currentGameState: boolean
 }
 
 export interface AuthState {

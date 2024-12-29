@@ -12,7 +12,6 @@ export default function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<Box className='min-h-screen flex items-center justify-center bg-gray-100'>
-				{/*<Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>*/}
 				<Provider store={store}>
 					<BrowserRouter>
 						<Routes>

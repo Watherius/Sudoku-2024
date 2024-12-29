@@ -2,7 +2,6 @@ import { LogOut } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../../store/authSlice'
-import { useAuthStore } from '../../store/authStore'
 
 interface HomeScreenProps {
 	onClickNewGame: () => void
@@ -18,7 +17,7 @@ export default function HomeScreen({ onClickNewGame, onClickContinueGame }: Home
 		navigate('/login')
 	}
 
-	const user = useAuthStore(state => state.user)
+	const userGameData = JSON.parse(localStorage.getItem('userGameData') as string)
 
 	return (
 		<div className='block relative h-[100%]'>
@@ -29,14 +28,12 @@ export default function HomeScreen({ onClickNewGame, onClickContinueGame }: Home
 				<LogOut />
 			</button>
 			<div className='flex flex-col text-center gap-2'>
-				<h2 className='text-6xl font-bold'>{user?.level}</h2>
+				<h2 className='text-6xl font-bold'>{userGameData?.level}</h2>
 				<p className='text-3xl'>Уровень</p>
-				<p className='text-lg'>
-					{user?.experience}/{user?.maxExperience} очков
-				</p>
+				<p className='text-lg'>{userGameData?.experience}/500 очков</p>
 			</div>
 			<div className='flex flex-col gap-2 absolute bottom-0 w-[100%]'>
-				{user?.currentGameState ? (
+				{userGameData?.currentGameState ? (
 					<button
 						onClick={onClickContinueGame}
 						className='bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md  transition-color duration-200'

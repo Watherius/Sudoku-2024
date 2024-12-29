@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import SudokuAction from '../components/sudokuStart/sudokuActions/SudokuAction'
 import SudokuBoard from '../components/sudokuStart/sudokuBoard/SudokuBoard'
 import SudokuInfo from '../components/sudokuStart/SudokuInfo'
 import SudokuNumber from '../components/sudokuStart/sudokuNumbers/SudokuNumber'
 import { useSudokuSelection } from '../hooks/useSudokuSelection'
-import { useAuthStore } from '../store/authStore'
+import { RootState } from '../store/store'
 import { GameState } from '../types/sudoku'
 import { generateSudoku } from '../utils/sudokuGenerator'
 
@@ -24,15 +25,15 @@ export default function GameStart({ level, setLevel }: any) {
 	//const [timer, setTimer] = useState<number>(0)
 	//const [isRunningTimer, setIsRunningTimer] = useState<boolean>(false)
 
-	const user = useAuthStore(state => state.user)
-	const stateGame = useAuthStore(state => state.stateGame)
+	const { user } = useSelector((state: RootState) => state.auth)
+	const userGameData = JSON.parse(localStorage.getItem('userGameData') as string)
+	const gameData = JSON.parse(localStorage.getItem('gameData') as string)
 
 	useEffect(() => {
-		if (user?.currentGameState && user?.currentGameData) {
-			const previousGame = user.currentGameData
-			const previousLevelGame = previousGame.boardDifficulty
+		if (user && gameData) {
+			const previousLevelGame = gameData.boardDifficulty
 
-			setGameState(previousGame.boardGame)
+			setGameState(gameData.boardGame)
 			setLevel({
 				label: previousLevelGame.label,
 				points: previousLevelGame.points,
@@ -51,10 +52,18 @@ export default function GameStart({ level, setLevel }: any) {
 		setSelectedCell(null)
 		setSelectedNumber(null)
 
-		if (user && !user.currentGameState) {
+		console.log('userGameData.currentGameState', !userGameData.currentGameState)
+		if (user && !userGameData.currentGameState) {
+			userGameData.currentGameState = true
+			localStorage.setItem(`userGameData`, JSON.stringify(userGameData))
+			const gameData = {
+				username: user.username,
+				boardGame: newGame,
+				boardDifficulty: level,
+			}
+			localStorage.setItem('gameData', JSON.stringify(gameData))
 			//setTimer(0) // Сбрасываем таймер при новой игре
 			//setIsRunningTimer(true)
-			stateGame(true, newGame, level /* 0*/) // Передаем начальное значение таймера
 		}
 	}
 

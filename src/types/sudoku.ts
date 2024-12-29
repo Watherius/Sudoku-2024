@@ -52,3 +52,9 @@ export interface SudokuActionsProps {
 	statusNote?: boolean
 	setStatusNote?: Dispatch<SetStateAction<boolean>>
 }
+
+export interface GameData {
+	/*level: number
+	experience: number
+	currentGameState: boolean*/
+}

@@ -10,7 +10,7 @@ import GameStart from './GameStart'
 
 export default function MainMenu() {
 	const navigate = useNavigate()
-	const { user, isAuthenticated } = useSelector((state: RootState) => state.auth)
+	const { isAuthenticated } = useSelector((state: RootState) => state.auth)
 
 	const [screen, setScreen] = useState<'home' | 'difficulty' | 'game'>('home')
 	const [level, setLevel] = useState<Difficulty>({
@@ -37,6 +37,16 @@ export default function MainMenu() {
 	const handleContinueGameClick = () => {
 		setScreen('game')
 	}
+
+	/*const newUser = {
+		level: 1,
+		experience: 0,
+		maxExperience: 500,
+		gameInProgress: false,
+		currentGameState: false,
+	}*/
+
+	//localStorage.setItem('gameData', JSON.stringify(updatedUsers))
 
 	return (
 		<>

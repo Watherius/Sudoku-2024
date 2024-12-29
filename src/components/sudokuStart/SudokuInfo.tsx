@@ -6,7 +6,7 @@ interface SudokuInfoProps {
 }
 
 export default function SudokuInfo({ difficulty /*gameTimer*/ }: SudokuInfoProps) {
-	const life = difficulty?.label === 'Легкая' ? 3 : 5
+	const life = difficulty?.label === 'Легкая' ? 5 : 3
 	const currentLife = Array.from({ length: life }, (_, index) => <Heart color='red' key={index} />)
 
 	return (

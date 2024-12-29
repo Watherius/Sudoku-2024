@@ -1,7 +1,7 @@
-import { User } from '../types/sudoku'
+import { User } from '../types/auth'
 
 export const loadUserDataFromStorage = (username: string): User | null => {
-	const userData = localStorage.getItem(`user_${username}`)
+	const userData = localStorage.getItem(username)
 	return userData ? (JSON.parse(userData) as User) : null
 }
 

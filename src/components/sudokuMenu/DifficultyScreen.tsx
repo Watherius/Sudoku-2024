@@ -1,9 +1,7 @@
 import { CornerDownLeft } from 'lucide-react'
 
 import { Dispatch, SetStateAction } from 'react'
-import { useAuthStore } from '../../store/authStore'
 import { Difficulty } from '../../types/sudoku'
-import { loadUserDataFromStorage } from '../../utils/localStorage'
 
 interface DifficultyScreenProps {
 	onClick: () => void
@@ -19,28 +17,14 @@ const difficulties = [
 	{ label: 'Мастер', points: 300, difficulty: 58 },
 ]
 
-export default function DifficultyScreen({
-	onClick,
-	setLevel,
-	setScreen,
-}: DifficultyScreenProps) {
-	const user = useAuthStore(state => state.user)
-
-	const handledifficultyClick = (
-		label: string,
-		points: number,
-		difficulty: number
-	) => {
-		const username = user?.username ? `${user.username}` : null
-
-		if (username) {
-			const userData = loadUserDataFromStorage(username)
-			if (userData) {
-				delete userData.currentGameData
-				userData.currentGameState = false
-				localStorage.setItem(`user_${user?.username}`, JSON.stringify(userData))
-				useAuthStore.getState().login(userData)
-			}
+export default function DifficultyScreen({ onClick, setLevel, setScreen }: DifficultyScreenProps) {
+	const handledifficultyClick = (label: string, points: number, difficulty: number) => {
+		const gameData = JSON.parse(localStorage.getItem('gameData') as string)
+		const userGameData = JSON.parse(localStorage.getItem('userGameData') as string)
+		if (gameData) {
+			localStorage.removeItem('gameData')
+			userGameData.currentGameState = false
+			localStorage.setItem(`userGameData`, JSON.stringify(userGameData))
 		}
 		setLevel({ label: label, points: points, difficulty: difficulty })
 		setScreen('game')
@@ -60,9 +44,7 @@ export default function DifficultyScreen({
 					<button
 						key={index}
 						className='w-[100%] bg-white hover:bg-gray-100 text-black font-bold py-2 px-4 rounded shadow-md'
-						onClick={() =>
-							handledifficultyClick(diff.label, diff.points, diff.difficulty)
-						}
+						onClick={() => handledifficultyClick(diff.label, diff.points, diff.difficulty)}
 					>
 						{diff.label} (+{diff.points})
 					</button>

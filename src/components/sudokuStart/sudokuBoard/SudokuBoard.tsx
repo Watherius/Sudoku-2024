@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { useAuthStore } from '../../../store/authStore'
 import { CellPosition, Difficulty, GameState } from '../../../types/sudoku'
 import { cloneBoard, getCellKey } from '../../../utils/boardUtils'
 import { getCellState } from '../../../utils/cellStateUtils'
@@ -34,8 +33,8 @@ export default function SudokuBoard({
 	level,
 }: //timer,
 SudokuBoardProps) {
-	const stateGame = useAuthStore(state => state.stateGame)
-	const user = useAuthStore(state => state.user)
+	//const stateGame = useAuthStore(state => state.stateGame)
+	//const user = useAuthStore(state => state.user)
 
 	const handleCellClick = (rowIndex: number, colIndex: number) => {
 		const position: CellPosition = [rowIndex, colIndex]
@@ -80,9 +79,9 @@ SudokuBoardProps) {
 
 			setGameState(updatedGameState)
 
-			if (user) {
-				stateGame(true, updatedGameState, level /*, timer*/)
-			}
+			/*if (user) {
+				stateGame(true, updatedGameState, level )
+			}*/
 		}
 	}
 
