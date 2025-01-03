@@ -1,7 +1,10 @@
-import { Dispatch, SetStateAction, useEffect } from 'react'
-import { CellPosition, Difficulty, GameState } from '../../../types/sudoku'
+import { Dispatch, SetStateAction } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../store/store'
+import { CellPosition, GameState } from '../../../types/sudoku'
 import { cloneBoard, getCellKey } from '../../../utils/boardUtils'
 import { getCellState } from '../../../utils/cellStateUtils'
+import { loadGameState, updateGameState } from '../../../utils/gameState'
 import SudokuCell from './SudokuCell'
 
 interface SudokuBoardProps {
@@ -15,8 +18,6 @@ interface SudokuBoardProps {
 	newValues: Set<string>
 	setNewValues: Dispatch<SetStateAction<Set<string>>>
 	statusNote: boolean
-	level: Difficulty
-	//timer: number
 }
 
 export default function SudokuBoard({
@@ -30,11 +31,8 @@ export default function SudokuBoard({
 	newValues,
 	setNewValues,
 	statusNote,
-	level,
-}: //timer,
-SudokuBoardProps) {
-	//const stateGame = useAuthStore(state => state.stateGame)
-	//const user = useAuthStore(state => state.user)
+}: SudokuBoardProps) {
+	const { user } = useSelector((state: RootState) => state.auth)
 
 	const handleCellClick = (rowIndex: number, colIndex: number) => {
 		const position: CellPosition = [rowIndex, colIndex]
@@ -54,6 +52,11 @@ SudokuBoardProps) {
 
 			const isCorrectValue = gameState.solutionBoard[rowIndex][colIndex] === selectedNumber
 
+			const updatedGameState = {
+				...gameState,
+				playingBoard: newBoard,
+			}
+
 			setConflicts(prev => {
 				const next = new Set(prev)
 				if (!isCorrectValue) {
@@ -61,6 +64,17 @@ SudokuBoardProps) {
 				} else {
 					next.delete(cellKey)
 				}
+
+				const historyLastGames = loadGameState(user?.username)
+				if (historyLastGames) {
+					const updatedConflicts = {
+						...historyLastGames,
+						boardGame: updatedGameState,
+						conflicts: Array.from(next),
+					}
+					updateGameState(user?.username, updatedConflicts)
+				}
+
 				return next
 			})
 
@@ -72,22 +86,9 @@ SudokuBoardProps) {
 				})
 			}
 
-			const updatedGameState = {
-				...gameState,
-				playingBoard: newBoard,
-			}
-
 			setGameState(updatedGameState)
-
-			/*if (user) {
-				stateGame(true, updatedGameState, level )
-			}*/
 		}
 	}
-
-	useEffect(() => {
-		console.log('useEffectconflicts: ', conflicts)
-	}, [conflicts])
 
 	return (
 		<div className='grid grid-cols-9 border-2 border-black'>

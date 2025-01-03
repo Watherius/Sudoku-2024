@@ -4,9 +4,12 @@ import SudokuAction from '../components/sudokuStart/sudokuActions/SudokuAction'
 import SudokuBoard from '../components/sudokuStart/sudokuBoard/SudokuBoard'
 import SudokuInfo from '../components/sudokuStart/SudokuInfo'
 import SudokuNumber from '../components/sudokuStart/sudokuNumbers/SudokuNumber'
+import { useTimer } from '../contexts/TimerContext'
+import { updateUserProgress } from '../hooks/useProgress'
 import { useSudokuSelection } from '../hooks/useSudokuSelection'
 import { RootState } from '../store/store'
 import { GameState } from '../types/sudoku'
+import { loadGameState, saveGameState } from '../utils/gameState'
 import { generateSudoku } from '../utils/sudokuGenerator'
 
 export default function GameStart({ level, setLevel }: any) {
@@ -22,58 +25,62 @@ export default function GameStart({ level, setLevel }: any) {
 	const [newValues, setNewValues] = useState<Set<string>>(new Set())
 	const [statusNote, setStatusNote] = useState<boolean>(false)
 
-	//const [timer, setTimer] = useState<number>(0)
-	//const [isRunningTimer, setIsRunningTimer] = useState<boolean>(false)
-
 	const { user } = useSelector((state: RootState) => state.auth)
-	const userGameData = JSON.parse(localStorage.getItem('userGameData') as string)
-	const gameData = JSON.parse(localStorage.getItem('gameData') as string)
+	const { startTimer, resetTimer } = useTimer()
 
 	useEffect(() => {
-		if (user && gameData) {
-			const previousLevelGame = gameData.boardDifficulty
+		if (!user) return
 
-			setGameState(gameData.boardGame)
-			setLevel({
-				label: previousLevelGame.label,
-				points: previousLevelGame.points,
-				difficulty: previousLevelGame.difficulty,
-			})
-			//setTimer(previousGame.boardTimer || 0) // Устанавливаем сохраненное значение таймера
-			//setIsRunningTimer(true)
+		const savedGameState = loadGameState(user.username)
+		if (savedGameState?.boardGame) {
+			const savedTimer = localStorage.getItem('gameTimer')
+			setGameState(savedGameState.boardGame)
+			setLevel(savedGameState.boardDifficulty)
+			setConflicts(new Set(savedGameState.conflicts))
+			if (savedTimer) startTimer(savedTimer)
 		} else {
 			startGame()
 		}
 	}, [user])
 
 	const startGame = () => {
+		if (!user) return
+
 		const newGame = generateSudoku(level?.difficulty)
 		setGameState(newGame)
 		setSelectedCell(null)
 		setSelectedNumber(null)
+		resetTimer()
+		startTimer()
 
-		console.log('userGameData.currentGameState', !userGameData.currentGameState)
-		if (user && !userGameData.currentGameState) {
-			userGameData.currentGameState = true
-			localStorage.setItem(`userGameData`, JSON.stringify(userGameData))
-			const gameData = {
-				username: user.username,
+		const historyLastGames = loadGameState(user?.username)
+		console.log('historyLastGames: ', historyLastGames)
+		if (user && !historyLastGames) {
+			const newGameState = {
+				username: user?.username,
+				currentGameState: true,
 				boardGame: newGame,
 				boardDifficulty: level,
+				conflicts: Array.from(conflicts),
 			}
-			localStorage.setItem('gameData', JSON.stringify(gameData))
-			//setTimer(0) // Сбрасываем таймер при новой игре
-			//setIsRunningTimer(true)
+			saveGameState(user.username, newGameState)
 		}
+	}
+
+	const handleGameComplete = () => {
+		if (!user || !level) return
+
+		// Обновляем прогресс пользователя
+		updateUserProgress(user.username, level.points)
+
+		// Очищаем состояние игры
+		//saveGameState(user.username, { currentGameState: false })
 	}
 
 	return (
 		<div className='min-h-screen bg-gray-100 flex items-center justify-center p-4'>
 			<div className='bg-white rounded-xl shadow-xl p-6'>
-				<SudokuInfo
-					difficulty={level}
-					//gameTimer={GameTimer({ timer, setTimer, isRunningTimer })}
-				/>
+				<SudokuInfo difficulty={level} />
 				<SudokuBoard
 					gameState={gameState}
 					setGameState={setGameState}
@@ -85,8 +92,7 @@ export default function GameStart({ level, setLevel }: any) {
 					newValues={newValues}
 					setNewValues={setNewValues}
 					statusNote={statusNote}
-					level={level}
-					//timer={timer}
+					//onGameComplete={handleGameComplete}
 				/>
 				<SudokuAction
 					gameState={gameState}

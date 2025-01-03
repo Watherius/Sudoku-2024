@@ -38,16 +38,6 @@ export default function MainMenu() {
 		setScreen('game')
 	}
 
-	/*const newUser = {
-		level: 1,
-		experience: 0,
-		maxExperience: 500,
-		gameInProgress: false,
-		currentGameState: false,
-	}*/
-
-	//localStorage.setItem('gameData', JSON.stringify(updatedUsers))
-
 	return (
 		<>
 			{screen === 'game' ? (

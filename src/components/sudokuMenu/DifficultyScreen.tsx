@@ -1,7 +1,10 @@
 import { CornerDownLeft } from 'lucide-react'
 
 import { Dispatch, SetStateAction } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 import { Difficulty } from '../../types/sudoku'
+import { clearGameState } from '../../utils/gameState'
 
 interface DifficultyScreenProps {
 	onClick: () => void
@@ -18,14 +21,11 @@ const difficulties = [
 ]
 
 export default function DifficultyScreen({ onClick, setLevel, setScreen }: DifficultyScreenProps) {
+	const { user } = useSelector((state: RootState) => state.auth)
+
 	const handledifficultyClick = (label: string, points: number, difficulty: number) => {
-		const gameData = JSON.parse(localStorage.getItem('gameData') as string)
-		const userGameData = JSON.parse(localStorage.getItem('userGameData') as string)
-		if (gameData) {
-			localStorage.removeItem('gameData')
-			userGameData.currentGameState = false
-			localStorage.setItem(`userGameData`, JSON.stringify(userGameData))
-		}
+		if (user) clearGameState(user?.username)
+
 		setLevel({ label: label, points: points, difficulty: difficulty })
 		setScreen('game')
 	}

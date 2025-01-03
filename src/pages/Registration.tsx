@@ -6,31 +6,25 @@ import { register } from '../store/authSlice'
 import { AppDispatch, RootState } from '../store/store'
 import { LoginCredentials } from '../types/auth'
 import { authSchema } from '../utils/authValidation'
-import { loadUserDataFromStorage } from '../utils/localStorage'
 
 export default function Registration() {
-	const error = useSelector((state: RootState) => state.auth.error)
 	const dispatch = useDispatch<AppDispatch>()
 	const navigate = useNavigate()
+	const error = useSelector((state: RootState) => state.auth.error)
 
 	const handleSubmit = async (values: LoginCredentials, { setSubmitting }: FormikHelpers<LoginCredentials>) => {
-		const success = await dispatch(register(values) as any)
-		setSubmitting(false)
+		try {
+			const success = (await dispatch(register(values))) as boolean
+			setSubmitting(false)
 
-		const existingGameData = loadUserDataFromStorage('userGameData')
-
-		if (success && !error && !existingGameData) {
-			const userGameData = {
-				username: values.username,
-				level: 1,
-				experience: 0,
-				currentGameState: false,
+			if (success) {
+				setTimeout(() => {
+					navigate('/')
+				}, 1500)
 			}
-			localStorage.setItem('userGameData', JSON.stringify(userGameData))
-
-			setTimeout(() => {
-				navigate('/')
-			}, 1500)
+		} catch (error) {
+			console.error('Ошибка при регистрации:', error)
+			setSubmitting(false)
 		}
 	}
 
@@ -70,11 +64,11 @@ export default function Registration() {
 						helperText={touched.password && errors.password}
 					/>
 
-					{/*error && (
+					{error && (
 						<Typography color='error' variant='body2' className='text-center'>
 							{error}
 						</Typography>
-					)*/}
+					)}
 
 					<Button
 						fullWidth

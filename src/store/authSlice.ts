@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { AuthState, LoginCredentials, User } from '../types/auth'
+import { AuthState, LoginCredentials, User, UserData } from '../types/auth'
 import { encrypt, isValidPassword } from '../utils/authEncryption'
 import { AppDispatch } from './store'
 
@@ -109,7 +109,6 @@ export const login = (credentials: LoginCredentials) => async (dispatch: AppDisp
 export const register = (credentials: LoginCredentials) => async (dispatch: AppDispatch) => {
 	try {
 		const users = JSON.parse(localStorage.getItem('users') || '[]')
-
 		if (users.some((u: User) => u.username === credentials.username)) {
 			dispatch(loginFailure('Такой логин уже существует'))
 			return
@@ -125,6 +124,19 @@ export const register = (credentials: LoginCredentials) => async (dispatch: AppD
 
 		users.push(newUser)
 		localStorage.setItem('users', JSON.stringify(users))
+
+		const usersData = JSON.parse(localStorage.getItem('usersData') || '[]')
+
+		const newUserData: UserData = {
+			id: crypto.randomUUID(),
+			username: credentials.username,
+			level: 1,
+			experience: 0,
+		}
+
+		usersData.push(newUserData)
+		localStorage.setItem('usersData', JSON.stringify(usersData))
+
 		dispatch(loginSuccess(newUser))
 
 		// Срок сессии

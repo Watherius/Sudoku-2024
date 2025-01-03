@@ -6,11 +6,12 @@ export interface User {
 	lastLogin: number
 }
 
-export interface UserData extends User {
+export interface UserData {
+	id: string
 	username: string
 	level: number
 	experience: number
-	currentGameState: boolean
+	//currentGameState: boolean
 }
 
 export interface AuthState {
