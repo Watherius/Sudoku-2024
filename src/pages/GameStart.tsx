@@ -1,18 +1,22 @@
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import SudokuAction from '../components/sudokuStart/sudokuActions/SudokuAction'
 import SudokuBoard from '../components/sudokuStart/sudokuBoard/SudokuBoard'
 import SudokuInfo from '../components/sudokuStart/SudokuInfo'
 import SudokuNumber from '../components/sudokuStart/sudokuNumbers/SudokuNumber'
 import { useTimer } from '../contexts/TimerContext'
-import { updateUserProgress } from '../hooks/useProgress'
 import { useSudokuSelection } from '../hooks/useSudokuSelection'
 import { RootState } from '../store/store'
-import { GameState } from '../types/sudoku'
+import { Difficulty, GameState } from '../types/sudoku'
 import { loadGameState, saveGameState } from '../utils/gameState'
 import { generateSudoku } from '../utils/sudokuGenerator'
 
-export default function GameStart({ level, setLevel }: any) {
+interface GameStartProps {
+	level: Difficulty
+	setLevel: Dispatch<SetStateAction<Difficulty>>
+}
+
+export default function GameStart({ level, setLevel }: GameStartProps) {
 	const [gameState, setGameState] = useState<GameState>({
 		playingBoard: [],
 		solutionBoard: [],
@@ -71,7 +75,7 @@ export default function GameStart({ level, setLevel }: any) {
 		if (!user || !level) return
 
 		// Обновляем прогресс пользователя
-		updateUserProgress(user.username, level.points)
+		//updateUserProgress(user.username, level.points)
 
 		// Очищаем состояние игры
 		//saveGameState(user.username, { currentGameState: false })
@@ -80,7 +84,7 @@ export default function GameStart({ level, setLevel }: any) {
 	return (
 		<div className='min-h-screen bg-gray-100 flex items-center justify-center p-4'>
 			<div className='bg-white rounded-xl shadow-xl p-6'>
-				<SudokuInfo difficulty={level} />
+				<SudokuInfo difficulty={level} conflicts={conflicts} />
 				<SudokuBoard
 					gameState={gameState}
 					setGameState={setGameState}

@@ -21,6 +21,7 @@ export default function HomeScreen({ onClickNewGame, onClickContinueGame }: Home
 		dispatch(logout())
 		navigate('/login')
 	}
+
 	const userData = loadUserDataFromStorage(user?.username)
 	const gameState = loadGameState(user?.username)
 	const nextLevelExp = userData ? getNextLevelThreshold(userData?.level) : 100

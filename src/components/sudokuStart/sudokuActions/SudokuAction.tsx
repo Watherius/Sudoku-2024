@@ -1,10 +1,8 @@
 import { Lightbulb, PenLine, Undo2 } from 'lucide-react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../store/store'
 import { SudokuActionsProps } from '../../../types/sudoku'
-import {
-	addRandomValue,
-	removeConflictElement,
-	toggleNoteMode,
-} from '../../../utils/sudokuActions'
+import { addRandomValue, removeConflictElement, toggleNoteMode } from '../../../utils/sudokuActions'
 import ActionButton from './ActionButton'
 
 export default function SudokuActions({
@@ -18,6 +16,8 @@ export default function SudokuActions({
 	statusNote,
 	setStatusNote,
 }: SudokuActionsProps) {
+	const { user } = useSelector((state: RootState) => state.auth)
+
 	const buttonIconSize = 32
 
 	const getButtonClass = () => {
@@ -30,14 +30,7 @@ export default function SudokuActions({
 				buttonIcon={<Undo2 size={buttonIconSize} />}
 				buttonStyle={getButtonClass()}
 				buttonText='Стереть'
-				onClick={() =>
-					removeConflictElement(
-						gameState,
-						setGameState,
-						conflicts,
-						setConflicts
-					)
-				}
+				onClick={() => removeConflictElement(gameState, setGameState, conflicts, setConflicts, user)}
 			/>
 			<ActionButton
 				buttonIcon={<Lightbulb size={buttonIconSize} />}
@@ -45,13 +38,7 @@ export default function SudokuActions({
 				buttonText='Подсказка'
 				onClick={() => {
 					if (setSelectedCell && setNewValues && setSelectedNumber) {
-						addRandomValue(
-							gameState,
-							setGameState,
-							setSelectedCell,
-							setNewValues,
-							setSelectedNumber
-						)
+						addRandomValue(gameState, setGameState, setSelectedCell, setNewValues, setSelectedNumber)
 					}
 				}}
 			/>
