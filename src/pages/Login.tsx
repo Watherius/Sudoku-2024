@@ -1,24 +1,37 @@
 import { Button, TextField, Typography } from '@mui/material'
 import { Form, Formik, FormikHelpers } from 'formik'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import { login } from '../store/authSlice'
-import { RootState } from '../store/store'
+import { clearError, login } from '../store/authSlice'
+import { AppDispatch, RootState } from '../store/store'
 import { LoginCredentials } from '../types/auth'
 import { authSchema } from '../utils/authValidation'
 
 export default function Login() {
-	const dispatch = useDispatch()
+	const dispatch = useDispatch<AppDispatch>()
 	const navigate = useNavigate()
 	const error = useSelector((state: RootState) => state.auth.error)
 
-	const handleSubmit = (values: LoginCredentials, { setSubmitting }: FormikHelpers<LoginCredentials>) => {
-		dispatch(login(values) as any).then(() => {
+	useEffect(() => {
+		dispatch(clearError())
+	}, [dispatch])
+
+	const handleSubmit = async (values: LoginCredentials, { setSubmitting }: FormikHelpers<LoginCredentials>) => {
+		console.log(error)
+		try {
+			const successLogin = (await dispatch(login(values))) as boolean
 			setSubmitting(false)
-			if (!error) {
-				navigate('/')
+
+			if (successLogin) {
+				setTimeout(() => {
+					navigate('/')
+				}, 1500)
 			}
-		})
+		} catch (error) {
+			console.error('Ошибка авторизации:', error)
+			setSubmitting(false)
+		}
 	}
 
 	return (

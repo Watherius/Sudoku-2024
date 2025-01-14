@@ -100,9 +100,11 @@ export const login = (credentials: LoginCredentials) => async (dispatch: AppDisp
 		setTimeout(() => {
 			dispatch(logout())
 		}, DAY_IN_MS)
+		return true
 	} catch (error) {
 		console.error('Login Error:', error)
 		dispatch(loginFailure('Ошибка входа!'))
+		return false
 	}
 }
 
@@ -132,6 +134,7 @@ export const register = (credentials: LoginCredentials) => async (dispatch: AppD
 			username: credentials.username,
 			level: 1,
 			experience: 0,
+			currentGameState: false,
 		}
 
 		usersData.push(newUserData)

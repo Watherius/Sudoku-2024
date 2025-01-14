@@ -11,7 +11,7 @@ export interface UserData {
 	username: string
 	level: number
 	experience: number
-	//currentGameState: boolean
+	currentGameState: boolean
 }
 
 export interface AuthState {

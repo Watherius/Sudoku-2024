@@ -13,8 +13,8 @@ export const getCellState = (
 	const cellKey = getCellKey(rowIndex, colIndex)
 	const cell = board[rowIndex][colIndex]
 	const hasConflict = conflicts.has(cellKey)
-	const isSelected =
-		selectedCell?.[0] === rowIndex && selectedCell?.[1] === colIndex
+	const isSelected = selectedCell?.[0] === rowIndex && selectedCell?.[1] === colIndex
+
 	const isSameNumber = Boolean(
 		!hasConflict &&
 			cell !== 0 &&
@@ -27,14 +27,12 @@ export const getCellState = (
 	const validPlacements =
 		selectedCell &&
 		conflicts.has(getCellKey(selectedCell[0], selectedCell[1])) &&
-		selectedNumber !== null
-			? getValidPlacements(
-					board,
-					selectedCell[0],
-					selectedCell[1],
-					selectedNumber,
-					conflicts
-			  )
+		selectedCell[0] >= 0 &&
+		selectedCell[0] < board.length &&
+		selectedCell[1] >= 0 &&
+		selectedCell[1] < board[selectedCell[0]].length &&
+		board[selectedCell[0]][selectedCell[1]] !== 0
+			? getValidPlacements(board, selectedCell[0], selectedCell[1], board[selectedCell[0]][selectedCell[1]], conflicts)
 			: new Set<string>()
 
 	return {
@@ -42,10 +40,7 @@ export const getCellState = (
 		hasConflict,
 		isSameNumber,
 		showValidPlacement: validPlacements.has(cellKey),
-		isHighlighted: Boolean(
-			selectedCell &&
-				(selectedCell[0] === rowIndex || selectedCell[1] === colIndex)
-		),
+		isHighlighted: Boolean(selectedCell && (selectedCell[0] === rowIndex || selectedCell[1] === colIndex)),
 		isInSameBox: Boolean(selectedCell && getSameBox(position, selectedCell)),
 	}
 }

@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { User } from '../types/auth'
 import { CellPosition, GameState } from '../types/sudoku'
 import { cloneBoard, getCellKey } from './boardUtils'
-import { loadGameState, updateGameState } from './gameState'
+import { loadGameHistory, updateGameState } from './gameState'
 
 export function removeConflictElement(
 	gameState: GameState,
@@ -27,7 +27,7 @@ export function removeConflictElement(
 			const next = new Set(prev)
 			next.delete(lastConflict)
 
-			const historyLastGames = loadGameState(user?.username)
+			const historyLastGames = loadGameHistory(user?.username)
 			if (historyLastGames) {
 				const updatedConflicts = {
 					...historyLastGames,

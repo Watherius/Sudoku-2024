@@ -1,8 +1,9 @@
 import { Button, TextField, Typography } from '@mui/material'
 import { Form, Formik, FormikHelpers } from 'formik'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import { register } from '../store/authSlice'
+import { clearError, register } from '../store/authSlice'
 import { AppDispatch, RootState } from '../store/store'
 import { LoginCredentials } from '../types/auth'
 import { authSchema } from '../utils/authValidation'
@@ -12,18 +13,23 @@ export default function Registration() {
 	const navigate = useNavigate()
 	const error = useSelector((state: RootState) => state.auth.error)
 
+	useEffect(() => {
+		dispatch(clearError())
+	}, [dispatch])
+
 	const handleSubmit = async (values: LoginCredentials, { setSubmitting }: FormikHelpers<LoginCredentials>) => {
+		console.log(error)
 		try {
-			const success = (await dispatch(register(values))) as boolean
+			const successRegistration = (await dispatch(register(values))) as boolean
 			setSubmitting(false)
 
-			if (success) {
+			if (successRegistration) {
 				setTimeout(() => {
 					navigate('/')
 				}, 1500)
 			}
 		} catch (error) {
-			console.error('Ошибка при регистрации:', error)
+			console.error('Ошибка регистрации:', error)
 			setSubmitting(false)
 		}
 	}

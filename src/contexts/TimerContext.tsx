@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 interface TimerContextType {
 	timer: string
@@ -19,25 +19,25 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
 		return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
 	}
 
-	const startTimer = (initialTime?: string) => {
+	const startTimer = useCallback((initialTime?: string) => {
 		if (initialTime) {
 			const [minutes, seconds] = initialTime.split(':').map(Number)
 			setSeconds(minutes * 60 + seconds)
 		}
 		setIsRunning(true)
-	}
+	}, [])
 
-	const stopTimer = () => {
+	const stopTimer = useCallback(() => {
 		setIsRunning(false)
-	}
+	}, [])
 
-	const resetTimer = () => {
+	const resetTimer = useCallback(() => {
 		setSeconds(0)
 		setIsRunning(false)
-	}
+	}, [])
 
 	useEffect(() => {
-		let interval: NodeJS.Timeout | undefined
+		let interval: number | undefined
 
 		if (isRunning) {
 			interval = setInterval(() => {

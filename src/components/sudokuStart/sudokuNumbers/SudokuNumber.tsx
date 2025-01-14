@@ -1,3 +1,4 @@
+import React from 'react'
 import { GameState } from '../../../types/sudoku'
 import NumberButton from './NumberButton'
 
@@ -8,22 +9,13 @@ interface SelectNumberProps {
 	setSelectedNumber: (number: number | null) => void
 }
 
-export default function SudokuNumber({
-	gameState,
-	conflicts,
-	selectedNumber,
-	setSelectedNumber,
-}: SelectNumberProps) {
+const SudokuNumber = React.memo(({ gameState, conflicts, selectedNumber, setSelectedNumber }: SelectNumberProps) => {
 	const remainingValues = (num: number): number => {
 		let count = 9
 		if (!gameState.playingBoard.length) return count
 		for (let x = 0; x < 9; x++)
 			for (let y = 0; y < 9; y++) {
-				if (
-					!conflicts.has(`${x},${y}`) &&
-					gameState?.playingBoard[x][y] === num
-				)
-					count--
+				if (!conflicts.has(`${x},${y}`) && gameState?.playingBoard[x][y] === num) count--
 			}
 		return count
 	}
@@ -41,4 +33,6 @@ export default function SudokuNumber({
 			))}
 		</div>
 	)
-}
+})
+
+export default SudokuNumber

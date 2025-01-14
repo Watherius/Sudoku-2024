@@ -17,7 +17,7 @@ const levelThresholds: LevelThreshold[] = [
 ]
 
 export const getNextLevelThreshold = (currentLevel: number): number => {
-	const nextLevel = levelThresholds.find(lt => lt.level === currentLevel + 1)
+	const nextLevel = levelThresholds.find(lt => lt.level === currentLevel)
 	return nextLevel?.requiredExperience || Infinity
 }
 

@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { Difficulty } from '../../types/sudoku'
-import { clearGameState } from '../../utils/gameState'
+import { clearGameState, loadGameHistory } from '../../utils/gameState'
 
 interface DifficultyScreenProps {
 	onClick: () => void
@@ -24,7 +24,8 @@ export default function DifficultyScreen({ onClick, setLevel, setScreen }: Diffi
 	const { user } = useSelector((state: RootState) => state.auth)
 
 	const handledifficultyClick = (label: string, points: number, difficulty: number) => {
-		if (user) clearGameState(user?.username)
+		const userHistoryGame = loadGameHistory(user?.username)
+		if (user && userHistoryGame) clearGameState(user.username)
 
 		setLevel({ label: label, points: points, difficulty: difficulty })
 		setScreen('game')

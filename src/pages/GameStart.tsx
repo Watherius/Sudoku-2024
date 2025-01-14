@@ -7,8 +7,10 @@ import SudokuNumber from '../components/sudokuStart/sudokuNumbers/SudokuNumber'
 import { useTimer } from '../contexts/TimerContext'
 import { useSudokuSelection } from '../hooks/useSudokuSelection'
 import { RootState } from '../store/store'
+import { UserData } from '../types/auth'
 import { Difficulty, GameState } from '../types/sudoku'
-import { loadGameState, saveGameState } from '../utils/gameState'
+import { loadGameHistory, saveGameState } from '../utils/gameState'
+import { loadDataStorage, updateDataStorage } from '../utils/localStorage'
 import { generateSudoku } from '../utils/sudokuGenerator'
 
 interface GameStartProps {
@@ -31,12 +33,11 @@ export default function GameStart({ level, setLevel }: GameStartProps) {
 
 	const { user } = useSelector((state: RootState) => state.auth)
 	const { startTimer, resetTimer } = useTimer()
-
 	useEffect(() => {
 		if (!user) return
 
-		const savedGameState = loadGameState(user.username)
-		if (savedGameState?.boardGame) {
+		const savedGameState = loadGameHistory(user.username)
+		if (savedGameState) {
 			const savedTimer = localStorage.getItem('gameTimer')
 			setGameState(savedGameState.boardGame)
 			setLevel(savedGameState.boardDifficulty)
@@ -57,21 +58,26 @@ export default function GameStart({ level, setLevel }: GameStartProps) {
 		resetTimer()
 		startTimer()
 
-		const historyLastGames = loadGameState(user?.username)
-		console.log('historyLastGames: ', historyLastGames)
-		if (user && !historyLastGames) {
-			const newGameState = {
-				username: user?.username,
-				currentGameState: true,
+		const userGameHistory = loadGameHistory(user.username)
+		if (user && !userGameHistory) {
+			const createHistoryGameForUser = {
+				username: user.username,
 				boardGame: newGame,
 				boardDifficulty: level,
 				conflicts: Array.from(conflicts),
 			}
-			saveGameState(user.username, newGameState)
+			saveGameState(user.username, createHistoryGameForUser)
+
+			const userData = loadDataStorage(user.username, 'usersData')
+			const updatedUserData = {
+				...userData,
+				currentGameState: true,
+			} as UserData
+			updateDataStorage(user.username, 'usersData', updatedUserData)
 		}
 	}
 
-	const handleGameComplete = () => {
+	/*const handleGameComplete = () => {
 		if (!user || !level) return
 
 		// Обновляем прогресс пользователя
@@ -79,7 +85,7 @@ export default function GameStart({ level, setLevel }: GameStartProps) {
 
 		// Очищаем состояние игры
 		//saveGameState(user.username, { currentGameState: false })
-	}
+	}*/
 
 	return (
 		<div className='min-h-screen bg-gray-100 flex items-center justify-center p-4'>

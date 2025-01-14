@@ -2,10 +2,9 @@ import { LogOut } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../../store/authSlice'
-import { RootState } from '../../store/store'
-import { loadGameState } from '../../utils/gameState'
+import { AppDispatch, RootState } from '../../store/store'
 import { getNextLevelThreshold } from '../../utils/levelSystem'
-import { loadUserDataFromStorage } from '../../utils/localStorage'
+import { loadDataStorage } from '../../utils/localStorage'
 
 interface HomeScreenProps {
 	onClickNewGame: () => void
@@ -14,7 +13,7 @@ interface HomeScreenProps {
 
 export default function HomeScreen({ onClickNewGame, onClickContinueGame }: HomeScreenProps) {
 	const navigate = useNavigate()
-	const dispatch = useDispatch()
+	const dispatch = useDispatch<AppDispatch>()
 	const { user } = useSelector((state: RootState) => state.auth)
 
 	const handleLogout = () => {
@@ -22,8 +21,9 @@ export default function HomeScreen({ onClickNewGame, onClickContinueGame }: Home
 		navigate('/login')
 	}
 
-	const userData = loadUserDataFromStorage(user?.username)
-	const gameState = loadGameState(user?.username)
+	//const gameState = loadGameState(user?.username)
+
+	const userData = loadDataStorage(user?.username, 'usersData')
 	const nextLevelExp = userData ? getNextLevelThreshold(userData?.level) : 100
 
 	return (
@@ -42,7 +42,7 @@ export default function HomeScreen({ onClickNewGame, onClickContinueGame }: Home
 				</p>
 			</div>
 			<div className='flex flex-col gap-2 absolute bottom-0 w-[100%]'>
-				{gameState?.currentGameState && (
+				{userData?.currentGameState && (
 					<button
 						onClick={onClickContinueGame}
 						className='bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md  transition-color duration-200'
