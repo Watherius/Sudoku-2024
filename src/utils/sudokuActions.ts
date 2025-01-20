@@ -11,6 +11,7 @@ export function removeConflictElement(
 	setConflicts: Dispatch<SetStateAction<Set<string>>>,
 	user: User | null
 ) {
+	if (conflicts.size === 0) return
 	const lastConflict = Array.from(conflicts)[conflicts.size - 1]
 
 	const newBoard = cloneBoard(gameState.playingBoard)

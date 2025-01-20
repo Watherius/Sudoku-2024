@@ -1,10 +1,11 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store/store'
 import { CellPosition, GameState } from '../../../types/sudoku'
 import { cloneBoard, getCellKey } from '../../../utils/boardUtils'
 import { getCellState } from '../../../utils/cellStateUtils'
 import { loadGameHistory, updateGameState } from '../../../utils/gameState'
+import SudokuVictory from '../../modal/SudoVictory'
 import SudokuCell from './SudokuCell'
 
 interface SudokuBoardProps {
@@ -18,6 +19,11 @@ interface SudokuBoardProps {
 	newValues: Set<string>
 	setNewValues: Dispatch<SetStateAction<Set<string>>>
 	statusNote: boolean
+	difficulty: {
+		label: string
+		points: number
+		difficulty: number
+	}
 }
 
 const SudokuBoard = React.memo(
@@ -32,8 +38,31 @@ const SudokuBoard = React.memo(
 		newValues,
 		setNewValues,
 		statusNote,
+		difficulty,
 	}: SudokuBoardProps) => {
 		const { user } = useSelector((state: RootState) => state.auth)
+		const [isVictory, setIsVictory] = React.useState(false)
+
+		const checkVictory = useCallback(() => {
+			console.log('victory useCallback')
+			if (!gameState.playingBoard.length) return false
+
+			for (let i = 0; i < 9; i++) {
+				for (let j = 0; j < 9; j++) {
+					if (gameState.playingBoard[i][j] !== gameState.solutionBoard[i][j]) {
+						return false
+					}
+				}
+			}
+			return true
+		}, [gameState.playingBoard, gameState.solutionBoard])
+
+		useEffect(() => {
+			console.log('victory')
+			if (checkVictory()) {
+				setIsVictory(true)
+			}
+		}, [gameState.playingBoard, checkVictory])
 
 		const handleCellClick = (rowIndex: number, colIndex: number) => {
 			const position: CellPosition = [rowIndex, colIndex]
@@ -119,6 +148,9 @@ const SudokuBoard = React.memo(
 							</div>
 						)
 					})
+				)}
+				{user && (
+					<SudokuVictory open={isVictory} setOpen={setIsVictory} username={user.username} difficulty={difficulty} />
 				)}
 			</div>
 		)

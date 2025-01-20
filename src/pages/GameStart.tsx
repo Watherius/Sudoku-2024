@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import SudoGameOver from '../components/modal/SudoGameOver'
 import SudokuAction from '../components/sudokuStart/sudokuActions/SudokuAction'
 import SudokuBoard from '../components/sudokuStart/sudokuBoard/SudokuBoard'
 import SudokuInfo from '../components/sudokuStart/SudokuInfo'
@@ -20,6 +21,7 @@ interface GameStartProps {
 
 export default function GameStart({ level, setLevel }: GameStartProps) {
 	const [gameState, setGameState] = useState<GameState>({
+		originalBoard: [],
 		playingBoard: [],
 		solutionBoard: [],
 	})
@@ -30,9 +32,12 @@ export default function GameStart({ level, setLevel }: GameStartProps) {
 	)
 	const [newValues, setNewValues] = useState<Set<string>>(new Set())
 	const [statusNote, setStatusNote] = useState<boolean>(false)
+	const [lives, setLives] = useState(level?.label === 'Легкая' ? 5 : 3)
 
 	const { user } = useSelector((state: RootState) => state.auth)
 	const { startTimer, resetTimer } = useTimer()
+	const [open, setOpen] = useState(false)
+
 	useEffect(() => {
 		if (!user) return
 
@@ -77,20 +82,10 @@ export default function GameStart({ level, setLevel }: GameStartProps) {
 		}
 	}
 
-	/*const handleGameComplete = () => {
-		if (!user || !level) return
-
-		// Обновляем прогресс пользователя
-		//updateUserProgress(user.username, level.points)
-
-		// Очищаем состояние игры
-		//saveGameState(user.username, { currentGameState: false })
-	}*/
-
 	return (
 		<div className='min-h-screen bg-gray-100 flex items-center justify-center p-4'>
 			<div className='bg-white rounded-xl shadow-xl p-6'>
-				<SudokuInfo difficulty={level} conflicts={conflicts} />
+				<SudokuInfo difficulty={level} conflicts={conflicts} setOpen={setOpen} lives={lives} setLives={setLives} />
 				<SudokuBoard
 					gameState={gameState}
 					setGameState={setGameState}
@@ -102,7 +97,7 @@ export default function GameStart({ level, setLevel }: GameStartProps) {
 					newValues={newValues}
 					setNewValues={setNewValues}
 					statusNote={statusNote}
-					//onGameComplete={handleGameComplete}
+					difficulty={level}
 				/>
 				<SudokuAction
 					gameState={gameState}
@@ -121,6 +116,16 @@ export default function GameStart({ level, setLevel }: GameStartProps) {
 					selectedNumber={selectedNumber}
 					setSelectedNumber={setSelectedNumber}
 				/>
+				{open && (
+					<SudoGameOver
+						open={open}
+						setOpen={setOpen}
+						gameState={gameState}
+						setGameState={setGameState}
+						setConflicts={setConflicts}
+						setLives={setLives}
+					/>
+				)}
 			</div>
 		</div>
 	)

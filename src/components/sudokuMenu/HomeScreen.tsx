@@ -1,3 +1,4 @@
+import { Button } from '@mui/material'
 import { LogOut } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -50,12 +51,13 @@ export default function HomeScreen({ onClickNewGame, onClickContinueGame }: Home
 						Продолжить игру
 					</button>
 				)}
-				<button
+				<Button
+					className='!font-semibold !normal-case !bg-white hover:!bg-slate-100 !text-blue-600 !shadow-md !transition-color !duration-200'
+					variant='contained'
 					onClick={onClickNewGame}
-					className='bg-white hover:bg-slate-100 text-blue-600 font-bold py-2 px-4 rounded shadow-md transition-color duration-200'
 				>
 					Новая игра
-				</button>
+				</Button>
 			</div>
 		</div>
 	)

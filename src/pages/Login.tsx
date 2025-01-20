@@ -18,7 +18,6 @@ export default function Login() {
 	}, [dispatch])
 
 	const handleSubmit = async (values: LoginCredentials, { setSubmitting }: FormikHelpers<LoginCredentials>) => {
-		console.log(error)
 		try {
 			const successLogin = (await dispatch(login(values))) as boolean
 			setSubmitting(false)

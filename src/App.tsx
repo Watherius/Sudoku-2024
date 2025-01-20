@@ -1,6 +1,7 @@
 import { Box, createTheme, ThemeProvider } from '@mui/material'
 import { Provider } from 'react-redux'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { ScreenProvider } from './contexts/ScreenContext'
 import { TimerProvider } from './contexts/TimerContext'
 import Login from './pages/Login'
 import MainMenu from './pages/MainMenu'
@@ -15,14 +16,16 @@ export default function App() {
 			<Box className='min-h-screen flex items-center justify-center bg-gray-100'>
 				<Provider store={store}>
 					<TimerProvider>
-						<BrowserRouter>
-							<Routes>
-								<Route path='/login' element={<Login />} />
-								<Route path='/register' element={<Registration />} />
-								<Route path='/' element={<MainMenu />} />
-								<Route path='*' element={<Navigate to='/' replace />} />
-							</Routes>
-						</BrowserRouter>
+						<ScreenProvider>
+							<BrowserRouter>
+								<Routes>
+									<Route path='/login' element={<Login />} />
+									<Route path='/register' element={<Registration />} />
+									<Route path='/' element={<MainMenu />} />
+									<Route path='*' element={<Navigate to='/' replace />} />
+								</Routes>
+							</BrowserRouter>
+						</ScreenProvider>
 					</TimerProvider>
 				</Provider>
 			</Box>

@@ -35,11 +35,7 @@ const fillDiagonalBoxes = (board: Board): void => {
 	}
 }
 
-const fillRemaining = (
-	board: Board,
-	row: number = 0,
-	col: number = 0
-): boolean => {
+const fillRemaining = (board: Board, row: number = 0, col: number = 0): boolean => {
 	if (col >= 9 && row < 8) {
 		row++
 		col = 0
@@ -104,10 +100,12 @@ export const generateSudoku = (difficulty: number = 35): GameState => {
 	fillRemaining(solutionBoard)
 
 	const playingBoard = cloneBoard(solutionBoard)
+	const originalBoard = playingBoard
 
 	removeCells(playingBoard, difficulty)
 
 	return {
+		originalBoard,
 		playingBoard,
 		solutionBoard,
 	}

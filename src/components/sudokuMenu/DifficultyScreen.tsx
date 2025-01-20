@@ -2,6 +2,7 @@ import { CornerDownLeft } from 'lucide-react'
 
 import { Dispatch, SetStateAction } from 'react'
 import { useSelector } from 'react-redux'
+import { useScreen } from '../../contexts/ScreenContext'
 import { RootState } from '../../store/store'
 import { Difficulty } from '../../types/sudoku'
 import { clearGameState, loadGameHistory } from '../../utils/gameState'
@@ -9,7 +10,6 @@ import { clearGameState, loadGameHistory } from '../../utils/gameState'
 interface DifficultyScreenProps {
 	onClick: () => void
 	setLevel: Dispatch<SetStateAction<Difficulty>>
-	setScreen: Dispatch<SetStateAction<'game' | 'home' | 'difficulty'>>
 }
 
 const difficulties = [
@@ -20,8 +20,9 @@ const difficulties = [
 	{ label: 'Мастер', points: 300, difficulty: 58 },
 ]
 
-export default function DifficultyScreen({ onClick, setLevel, setScreen }: DifficultyScreenProps) {
+export default function DifficultyScreen({ onClick, setLevel }: DifficultyScreenProps) {
 	const { user } = useSelector((state: RootState) => state.auth)
+	const { setScreen } = useScreen()
 
 	const handledifficultyClick = (label: string, points: number, difficulty: number) => {
 		const userHistoryGame = loadGameHistory(user?.username)

@@ -22,6 +22,7 @@ export interface CellState {
 }
 
 export interface GameState {
+	originalBoard: Board
 	playingBoard: Board
 	solutionBoard: Board
 }
@@ -51,10 +52,4 @@ export interface SudokuActionsProps {
 	setNewValues?: Dispatch<SetStateAction<Set<string>>>
 	statusNote?: boolean
 	setStatusNote?: Dispatch<SetStateAction<boolean>>
-}
-
-export interface GameData {
-	/*level: number
-	experience: number
-	currentGameState: boolean*/
 }
